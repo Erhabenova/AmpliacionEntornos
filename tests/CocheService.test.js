@@ -6,9 +6,10 @@ describe('Pruebas Unitarias de CocheService', () => {
   let service;
 
   beforeEach(() => {
-    // Inicializar mock del DAO antes de cada prueba
+    // Inicializar mock del DAO incluyendo el nuevo método buscarTodos
     mockDao = {
       buscarPorMarca: jest.fn(),
+      buscarTodos: jest.fn(), // <--- ¡Añadido!
       guardar: jest.fn(),
       obtenerMaxId: jest.fn()
     };
@@ -18,7 +19,6 @@ describe('Pruebas Unitarias de CocheService', () => {
 
   describe('Método: consultarCochesPorMarca(marca)', () => {
     test('1. Marca existente ("Seat") -> Debería retornar una lista con exactamente 3 coches', async () => {
-      // Mockear la respuesta del DAO con 3 coches Seat
       const cochesMock = [
         new Coche(2, 'Seat', 'León', 1600),
         new Coche(4, 'Seat', 'Clio', 1400),
@@ -27,8 +27,9 @@ describe('Pruebas Unitarias de CocheService', () => {
       mockDao.buscarPorMarca.mockResolvedValue(cochesMock);
 
       const resultados = await service.consultarCochesPorMarca('Seat');
-      
+
       expect(mockDao.buscarPorMarca).toHaveBeenCalledWith('Seat');
+      expect(mockDao.buscarTodos).not.toHaveBeenCalled();
       expect(resultados).toHaveLength(3);
       expect(resultados[0].marca).toBe('Seat');
     });
@@ -37,18 +38,29 @@ describe('Pruebas Unitarias de CocheService', () => {
       mockDao.buscarPorMarca.mockResolvedValue([]);
 
       const resultados = await service.consultarCochesPorMarca('Ferrari');
-      
+
       expect(mockDao.buscarPorMarca).toHaveBeenCalledWith('Ferrari');
+      expect(mockDao.buscarTodos).not.toHaveBeenCalled();
       expect(resultados).toEqual([]);
     });
 
-    test('3. Entrada inválida (null, undefined o vacío) -> Debería retornar lista vacía sin llamar al DAO', async () => {
+    test('3. Entrada vacía o nula -> Debería llamar a buscarTodos() en el DAO y retornar la lista global', async () => {
+      const todosLosCochesMock = [
+        new Coche(1, 'Renault', 'Megane', 1500),
+        new Coche(2, 'Seat', 'León', 1600)
+      ];
+      // Configuramos el mock para cuando se llame a buscarTodos
+      mockDao.buscarTodos.mockResolvedValue(todosLosCochesMock);
+
       const resultNull = await service.consultarCochesPorMarca(null);
       const resultEmpty = await service.consultarCochesPorMarca('');
-      
+
+      // Comprobamos que NO se usa buscarPorMarca, sino buscarTodos
       expect(mockDao.buscarPorMarca).not.toHaveBeenCalled();
-      expect(resultNull).toEqual([]);
-      expect(resultEmpty).toEqual([]);
+      expect(mockDao.buscarTodos).toHaveBeenCalledTimes(2);
+
+      expect(resultNull).toEqual(todosLosCochesMock);
+      expect(resultEmpty).toEqual(todosLosCochesMock);
     });
   });
 
