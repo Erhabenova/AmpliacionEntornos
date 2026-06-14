@@ -39,7 +39,7 @@ class CocheService {
 
     // Validar cilindrada
     if (cilindrada === undefined || cilindrada === null) {
-      const err = new Error('La cilindrada es obligatoria');
+      const err = new Error('La cilindrada es necesaria y totalmente obligatoria');
       err.status = 400;
       throw err;
     }
