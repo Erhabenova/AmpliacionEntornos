@@ -2,6 +2,12 @@ const express = require('express');
 const router = express.Router();
 const cocheService = require('../services/CocheService');
 
+// Modificion de la salida de la pagina visualmente
+router.use((req, res, next) => {
+  req.app.set('json spaces', 2);
+  next();
+});
+
 // GET /coches - Listar coches filtrados por marca
 router.get('/', async (req, res) => {
   try {
