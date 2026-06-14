@@ -1,11 +1,9 @@
 name: Flujo de trabajo CI/CD para API Concesionario (Node.js + Express)
 
-# Permisos para poder subir la imagen docker al registro de GitHub
 permissions:
   contents: read
   packages: write
 
-# Se dispara al hacer push en cualquier rama
 on:
   push:
     branches:
@@ -16,27 +14,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Descargar el código del repositorio
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Configurar el entorno de Node.js en el servidor de GitHub
       - name: Configurar Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20' # Versión LTS estable de Node.js
+          node-version: '20'
 
-      # 3. Instalar dependencias para validar que no hay fallos de sintaxis
       - name: Instalar dependencias locales
-        run: |
-          npm install
-          # npm test
+        run: npm install
 
-      # 4. Construir la imagen Docker usando el Dockerfile de Node.js
       - name: Build Docker image
         run: docker build -t ghcr.io/${{ github.repository }}:latest .
 
-      # 5. Iniciar sesión en GitHub Container Registry (GHCR)
       - name: Log in to GHCR
         uses: docker/login-action@v2
         with:
@@ -44,11 +35,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # 6. Subir la imagen Docker a GitHub
       - name: Push image to GHCR
         run: docker push ghcr.io/${{ github.repository }}:latest
 
-      # 7. DESPLIEGUE EN AWS: Conectarse por SSH a tu instancia y relanzar la app
       - name: Deploy to AWS EC2 via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -59,14 +48,10 @@ jobs:
           script: |
             mkdir -p ~/api_concesionario
             cd ~/api_concesionario
-
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
             docker pull ghcr.io/${{ github.repository }}:latest
-
             docker stop api_concesionario_app 2>/dev/null || true
             docker rm api_concesionario_app 2>/dev/null || true
-
             docker run -d \
               --name api_concesionario_app \
               -p 3000:3000 \
