@@ -5,7 +5,6 @@ const port = process.env.PORT || 3000;
 
 // Middleware para analizar el cuerpo de solicitudes JSON
 app.use(express.json());
-
 const cocheController = require('./controllers/CocheController');
 app.use('/coches', cocheController);
 app.use('/api/coches', cocheController);
