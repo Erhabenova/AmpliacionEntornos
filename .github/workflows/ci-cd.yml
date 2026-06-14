@@ -65,5 +65,10 @@ jobs:
             docker run -d \
               --name api_concesionario_app \
               -p 3000:3000 \
+              -e PORT=3000 \
+              -e DB_HOST=172.17.0.1 \
+              -e DB_USER=isidoronm \
+              -e DB_PASSWORD=mm123 \
+              -e DB_DATABASE=concesionario_msr \
               --restart always \
               ghcr.io/$REPO_LOWER:latest
