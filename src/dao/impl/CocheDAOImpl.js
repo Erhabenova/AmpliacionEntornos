@@ -3,7 +3,7 @@ const pool = require('../../gestores/gestorDB');
 const Coche = require('../../models/Coche');
 
 class CocheDAOImpl extends ICocheDAO {
-  
+
   // Buscar coches por marca
   async buscarPorMarca(marca) {
     const [rows] = await pool.query(
@@ -26,6 +26,13 @@ class CocheDAOImpl extends ICocheDAO {
   async obtenerMaxId() {
     const [rows] = await pool.query('SELECT MAX(identificador) AS maxId FROM T_COCHE');
     return rows[0].maxId || 0;
+  }
+
+  async buscarTodos() {
+    const [rows] = await pool.query(
+      'SELECT identificador, marca, modelo, cilindrada FROM T_COCHE'
+    );
+    return rows.map(r => new Coche(r.identificador, r.marca, r.modelo, r.cilindrada));
   }
 }
 

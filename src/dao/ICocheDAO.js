@@ -14,6 +14,10 @@ class ICocheDAO {
   obtenerMaxId() {
     throw new Error('Método obtenerMaxId() no implementado');
   }
+
+  obtenerTodos() {
+    throw new Error('Método obtenerTodos() no implementado');
+  }
 }
 
 module.exports = ICocheDAO;

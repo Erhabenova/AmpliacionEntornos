@@ -7,11 +7,15 @@ class CocheService {
     this.dao = daoInstance || new CocheDAOImpl();
   }
 
+
+
   // Obtener coches por marca
   async consultarCochesPorMarca(marca) {
+    // Si la marca no existe, viene vacía o es solo espacios, traemos TODOS los coches
     if (!marca || typeof marca !== 'string' || marca.trim() === '') {
-      return [];
+      return await this.dao.buscarTodos();
     }
+    // Si tiene una marca, sigue funcionando con el filtro tradicional
     return await this.dao.buscarPorMarca(marca.trim());
   }
 
@@ -52,7 +56,7 @@ class CocheService {
     const nextId = maxId + 1;
 
     const nuevoCoche = new Coche(nextId, marca.trim(), modelo.trim(), cilindradaNum);
-    
+
     // Guardar en la base de datos
     return await this.dao.guardar(nuevoCoche);
   }
