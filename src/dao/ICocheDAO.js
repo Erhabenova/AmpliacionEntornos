@@ -1,7 +1,3 @@
-/**
- * Interfaz DAO para la entidad Coche.
- * Define los métodos que la implementación debe ofrecer.
- */
 class ICocheDAO {
   buscarPorMarca(marca) {
     throw new Error('Método buscarPorMarca() no implementado');

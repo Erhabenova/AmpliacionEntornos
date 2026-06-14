@@ -2,7 +2,7 @@
 FROM node:20-alpine
 
 # Establecer el directorio de trabajo especificado
-WORKDIR /usr/app_aaee_msr
+WORKDIR /usr/proyecto_integrador
 
 # Copiar package.json y package-lock.json
 COPY package*.json ./

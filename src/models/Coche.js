@@ -1,4 +1,3 @@
-// models/Coche.js
 class Coche {
   constructor(identificador, marca, modelo, cilindrada) {
     this.identificador = identificador;
